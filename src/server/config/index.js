@@ -1,4 +1,4 @@
-const config = {
+export default {
   database: 'mongodb://localhost/blog-workshop',
   port: 3030,
   secret: 'webpurple_secret',
@@ -6,5 +6,3 @@ const config = {
   vk_token: '6a2750226a2750226a275022a06a78eae766a276a275022303d339d487914ce08c44f1d',
   vk_user: ''
 }
-
-export default config;
