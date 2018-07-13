@@ -363,4 +363,5 @@ fetch('http://localhost:3030/api/vk') // отправляем запрос на 
 ```
 
 ## Обратная связь
-* E-mail для связи, вопросов и т.п. - [Igor_Fedyukin@epam.com](mailto:Igor_Fedyukin@epam.com).
+* E-mail для связи, вопросов и т.п. - [Igor_Fedyukin@epam.com](mailto:Igor_Fedyukin@epam.com);
+* [Feedback form](https://goo.gl/forms/fQ6JB8xjEiD2D5642).
