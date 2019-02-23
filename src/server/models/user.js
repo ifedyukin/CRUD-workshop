@@ -1,20 +1,23 @@
-import mongoose, { Schema, mongo } from 'mongoose';
+const USERS = [{
+  login: 'admin',
+  password: 'admin'
+}];
 
-const UserSchema = new Schema({
-  login: { type: String, unique: true, lowercase: true, index: true, required: true },
-  password: { type: String, required: true }
-});
+module.exports = {
+  comparePasswords: (user, password) => user.password === password,
+  findOne: ({ _id, login }) => USERS.find(user => user.login === login || user._id === _id),
+  create: ({login, password}) => {
+    if (!login || !password) {
+      return false;
+    }
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    return next();
+    const user = USERS.find(u => u.login === login);
+    if (user) {
+      return false;
+    }
+
+    const newUser = {login, password, _id: Math.floor(Math.random() * 1000)};
+    USERS.push(newUser);
+    return newUser;
   }
-
-  next();
-});
-
-UserSchema.methods.comparePasswords = function (password) {
-  return password === this.password;
-}
-
-export default mongoose.model('User', UserSchema);
+};

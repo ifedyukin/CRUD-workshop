@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const ForceCaseSensitivityPlugin = require('force-case-sensitivity-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HappyPack = require('happypack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 if (process.env.NODE_ENV === 'travisci') {
   process.env.NODE_ENV = 'production';
@@ -55,7 +56,7 @@ const config = {
     path.resolve(__dirname, 'src', 'client', 'index.js'),
   ],
   output: {
-    path: path.resolve(__dirname, '__build__'),
+    path: path.resolve(__dirname, './build/client'),
     filename: '[name].[hash].js',
     publicPath: '/',
   },

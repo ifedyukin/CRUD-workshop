@@ -1,7 +1,6 @@
 import React from 'react';
 import Cookie from 'universal-cookie';
 import { Redirect } from 'react-router-dom';
-import { markdown } from 'markdown';
 
 const cookie = new Cookie();
 
@@ -19,14 +18,20 @@ export class Edit extends React.Component {
     this.onPublish = this.onPublish.bind(this);
   }
 
+  fetchPostData(url) {
+    fetch(`http://localhost:3030/api/posts/${url.toString()}`)
+      .then(response => {
+        if (response.status === 404) {
+          window.location.assign('/');
+        } else return response.json();
+      })
+      .then(response => this.setState({ ...response }))
+      .catch(() => this.setState({ error: 404 }));
+  }
+
   componentDidMount() {
     const url = this.props.match.params.url;
-    if (url) {
-      fetch(`http://localhost:3030/api/posts/${url.toString()}?md`)
-        .then(response => response.json())
-        .then(response => this.setState({ ...response }))
-        .catch(() => this.setState({ error: 404 }));
-    }
+    if (url) this.fetchPostData(url);
   }
 
   onTogglePreview = ({ target }) => {
@@ -34,30 +39,50 @@ export class Edit extends React.Component {
     this.setState({ isPreview: checked });
   }
 
-  onPublish(e) {
-    e.preventDefault();
-    const url = this.props.match.params.url;
-    if (url) {
+  createPost() {
+    fetch('http://localhost:3030/api/posts', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': cookie.get('token'),
+      },
+      method: 'POST',
+      body: `title=${this.state.title}&body=${this.state.body}&url=${this.state.url}`,
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.props.update();
+        this.setState({ published: true })
+      });
+  }
 
-    } else {
-      fetch('http://localhost:3030/api/posts', {
+  updatePost() {
+    fetch(`http://localhost:3030/api/posts/${this.state._id}`, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': cookie.get('token'),
         },
-        method: 'POST',
+        method: 'PATCH',
         body: `title=${this.state.title}&body=${this.state.body}&url=${this.state.url}`,
       })
         .then(response => response.json())
         .then(response => {
           this.props.update();
           this.setState({ published: true })
-        })
+        });
+  }
+
+  onPublish(e) {
+    e.preventDefault();
+    const url = this.props.match.params.url;
+    if (url) {
+      this.updatePost();
+    } else {
+      this.createPost();
     }
   }
 
   getPreview = () => ({
-    __html: markdown.toHTML(this.state.body),
+    __html: this.state.body,
   });
 
   render() {

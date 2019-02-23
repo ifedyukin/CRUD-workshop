@@ -1,6 +1,6 @@
-import * as UserService from '../services/userService';
+const UserService = require('../services/userService');
 
-export default async function (req, res, next) {
+module.exports = async function (req, res, next) {
   const { token } = req;
 
   let user;

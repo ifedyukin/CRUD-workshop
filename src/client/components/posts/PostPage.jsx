@@ -5,11 +5,16 @@ export class PostPage extends React.Component {
   state = {};
 
   componentDidMount() {
-    const postUrl = this.props.match.params.url.toString();
+    const postUrl = this.props.match.params.url;
     fetch(`http://localhost:3030/api/posts/${postUrl}`)
-      .then(response => response.json())
-      .then(response => this.setState({ ...response }))
-      .catch(() => this.setState({ error: 404 }));
+      .then(response => {
+        if (response.status === 404) {
+          this.setState({ error: 404 })
+        } else {
+          return response.json();
+        }
+      })
+      .then(response => this.setState(() => response ? response : null));
   }
 
   render() {

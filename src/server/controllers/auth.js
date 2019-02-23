@@ -1,32 +1,30 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-import User from '../models/user';
-import config from '../config';
+const User = require('../models/user');
+const config = require('../config');
 
-export const signup = async (req, res, next) => {
+const signup = async (req, res, next) => {
   const credentials = req.body;
-  let user;
 
   if (credentials.key !== config.createKey) {
     res.json({ error: 'Incorrect key!' });
   }
 
-  try {
-    user = await User.create(credentials);
-  } catch ({ message }) {
+  const user = User.create(credentials);
+  if (!user) {
     return next({
-      status: 400,
-      message
+      status: 500,
+      message: 'Internal server error!'
     });
   }
 
   res.json(user);
 }
 
-export const signin = async (req, res, next) => {
+const signin = async (req, res, next) => {
   const { login, password } = req.body;
 
-  const user = await User.findOne({ login });
+  const user = User.findOne({ login });
 
   if (!user) {
     return next({
@@ -35,9 +33,8 @@ export const signin = async (req, res, next) => {
     });
   }
 
-  try {
-    const result = await user.comparePasswords(password);
-  } catch (err) {
+  const compareResult = User.comparePasswords(user, password);
+  if (!compareResult) {
     return next({
       status: 400,
       message: 'Bad credentials!'
@@ -47,3 +44,8 @@ export const signin = async (req, res, next) => {
   const token = jwt.sign({ _id: user._id }, config.secret);
   res.json(token);
 }
+
+module.exports = {
+  signin,
+  signup
+};

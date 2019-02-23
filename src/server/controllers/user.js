@@ -1,6 +1,6 @@
-import * as UserService from '../services/userService';
+const UserService = require('../services/userService');
 
-export async function getCurrentUser(req, res, next) {
+async function getCurrentUser(req, res, next) {
   const { token } = req;
 
   let user;
@@ -13,5 +13,9 @@ export async function getCurrentUser(req, res, next) {
     });
   }
 
-  return res.json(user);
+  return res.json({login: user.login});
+}
+
+module.exports = {
+  getCurrentUser
 }

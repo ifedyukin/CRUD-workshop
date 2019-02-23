@@ -15,7 +15,7 @@ export class Panel extends React.Component {
   loadPosts() {
     fetch('http://localhost:3030/api/posts')
       .then(response => response.json())
-      .then(response => this.setState({ posts: response.posts }));
+      .then(response => this.setState({ posts: response }));
   }
 
   onDelete(_id) {

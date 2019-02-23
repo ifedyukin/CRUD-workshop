@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-import config from '../config';
+const config = require('../config');
 
-export default async (req, res, next) => {
+module.exports = async (req, res, next) => {
   const token = req.headers['authorization'];
 
   if (!token) {

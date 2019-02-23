@@ -1,16 +1,15 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import session from 'express-session';
-import bodyParser from 'body-parser';
-import morgan from 'morgan';
-import cors from 'cors';
-import fetch from 'node-fetch';
+const path = require('path');
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const cors = require('cors');
+const fetch = require('node-fetch');
 
-import config from './config';
-import authRoute from './routes/auth';
-import postRoute from './routes/post';
-import errorHandler from './middlewares/errorHandler';
-import markdownConvert from './middlewares/markdownConvert';
+const config = require('./config');
+const authRoute = require('./routes/auth');
+const postRoute = require('./routes/post');
+const errorHandler = require('./middlewares/errorHandler');
 
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
@@ -19,11 +18,6 @@ import webpackConf from '../../webpack.config';
 
 const isProd = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'travisci';
 const app = express();
-
-mongoose.Promise = Promise;
-mongoose.connect(config.database, { useMongoClient: true })
-  .then(() => console.log('Mongo connected!'))
-  .catch(err => { throw err });
 
 app.listen(config.port, err => {
   if (err) throw err;
@@ -42,7 +36,7 @@ app.use(session({
 }));
 
 if (isProd) {
-  app.use(express.static('__build__'));
+  app.use(express.static('client'));
 } else {
   const compiler = webpack(webpackConf);
   app.use(webpackMiddleware(compiler, {
@@ -55,7 +49,7 @@ if (isProd) {
 }
 app.use(express.static('public'));
 app.use('/api', authRoute);
-app.use('/api', postRoute, markdownConvert);
+app.use('/api', postRoute);
 app.use('*', async (req, res) => {
   const indexPage = await fetch(req.protocol + '://' + req.get('host'))
     .then(async (response) => response.text())

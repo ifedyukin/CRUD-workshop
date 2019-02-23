@@ -24,22 +24,6 @@ header {
   padding: 25px;
 }
 
-.header-links {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-}
-
-.header-links a {
-  color: black;
-}
-
-.header-links a::before {
-  content: "» ";
-  margin-left: 25px;
-}
-
 .title {
   font-weight: 700;
   font-size: 25px;

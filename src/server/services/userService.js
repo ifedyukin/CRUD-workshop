@@ -1,14 +1,16 @@
-import User from '../models/user';
+const User = require('../models/user');
 
-export async function getUserByToken(token) {
+async function getUserByToken(token) {
   const { _id } = token;
+  const user = User.findOne({ _id });
 
-  let user;
-  try {
-    user = await User.findOne({ _id }, { password: 0 });
-  } catch (err) {
-    throw err;
+  if (!user) {
+    throw new Error('User not found!');
   }
 
   return user;
+}
+
+module.exports = {
+  getUserByToken
 }
